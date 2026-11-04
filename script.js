@@ -2,6 +2,7 @@ const titulo = document.getElementById("titulo");
 const texto = document.getElementById("texto");
 const opcao = document.getElementById("opcao");
 const proximo = document.getElementById("proximo");
+const pontuacao = document.getElementById("pontuação");
 
 const temas = [
     {
@@ -39,6 +40,7 @@ const temas = [
 let tema = temas[0];
 let perguntas = tema.perguntas;
 let atual = 0;
+let pontos = 0;
 
 function mostrarPergunta(){
     const p = perguntas[atual];
@@ -58,7 +60,9 @@ function mostrarPergunta(){
             const botoes = opcao.querySelectorAll("button");
             if(indice !== p.correta) {
                 botoes[indice].classList.add("errada");
-            } 
+            } else {
+                pontos += 1;
+            }
             botoes[p.correta].classList.add("certa");
             botoes.forEach(function (b) {
                 b.disabled = true;
@@ -72,10 +76,25 @@ function mostrarPergunta(){
     
 };
 
+function mostrarResultado(){
+    const de = perguntas.length;
+    pontuacao.textContent = `Você acertou ${pontos} de ${de}!`;
+    pontuacao.style.display = "block"
+    
+    texto.textContent = "";
+    titulo.textContent = "";
+    opcao.innerHTML = "";
+};
+
 proximo.addEventListener("click", function(){
     atual += 1; 
-    mostrarPergunta();
     proximo.style.display = "none";
+    if(atual === perguntas.length){
+        mostrarResultado();
+    } else {
+        mostrarPergunta();
+    }
+
 });
 
 mostrarPergunta();
