@@ -3,6 +3,14 @@ const texto = document.getElementById("texto");
 const opcao = document.getElementById("opcao");
 const proximo = document.getElementById("proximo");
 const pontuacao = document.getElementById("pontuação");
+const telaResultado = document.getElementById("tela-resultado");
+const telaJogo = document.getElementById("tela-jogo");
+const inicio = document.getElementById("inicio");
+const buttunDiv = document.getElementById("button-div");
+const telaInicio = document.getElementById("tela-inicio");
+const temaResultado = document.getElementById("tema");
+const restart = document.getElementById("restart");
+const mens = document.getElementById("mensagem");
 
 const temas = [
     {
@@ -42,6 +50,28 @@ let perguntas = tema.perguntas;
 let atual = 0;
 let pontos = 0;
 
+function criarTemas(){
+    temas.forEach(function (t){
+        const btnTema = document.createElement("button");
+        btnTema.textContent = t.nome;
+        buttunDiv.appendChild(btnTema);
+
+        btnTema.addEventListener("click", function (){
+            iniciarJogo(t);
+        });
+    });
+}
+
+function iniciarJogo(t){
+    atual = 0;
+    pontos = 0;
+    tema = t;
+    perguntas = t.perguntas;
+    
+    mostrarTela(telaJogo);
+    mostrarPergunta();
+};
+
 function mostrarPergunta(){
     const p = perguntas[atual];
 
@@ -78,12 +108,20 @@ function mostrarPergunta(){
 
 function mostrarResultado(){
     const de = perguntas.length;
+    let mensagem;
     pontuacao.textContent = `Você acertou ${pontos} de ${de}!`;
-    pontuacao.style.display = "block"
-    
-    texto.textContent = "";
-    titulo.textContent = "";
-    opcao.innerHTML = "";
+
+    if (pontos === perguntas.length) {
+        mensagem = "Perfeito! 🏆";
+    } else if (pontos >= perguntas.length / 2) {
+        mensagem = "Muito bem!";
+    } else {
+        mensagem = "Continue praticando!";
+    }
+
+    mens.textContent = mensagem;
+
+    mostrarTela(telaResultado);
 };
 
 proximo.addEventListener("click", function(){
@@ -97,4 +135,20 @@ proximo.addEventListener("click", function(){
 
 });
 
-mostrarPergunta();
+restart.addEventListener("click", function(){
+    iniciarJogo(tema);
+});
+
+temaResultado.addEventListener("click", function(){
+    mostrarTela(telaInicio);
+});
+
+function mostrarTela(tela) {
+    telaInicio.style.display = "none";
+    telaJogo.style.display = "none";
+    telaResultado.style.display = "none";
+    tela.style.display = "block";
+}
+
+criarTemas();
+mostrarTela(telaInicio);
