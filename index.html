@@ -6,23 +6,29 @@
         <title>Quiz</title>
     </head>
     <body>
-        <div id="tela-inicio">
-            <h1 id="inicio">Escolha um tema</h1>
-            <div id="button-div"></div>
-        </div>
-        <div id="tela-jogo">
-            <p id="tempo"></p>
-            <h1 id="titulo"></h1>
-            <h2 id="texto"></h2>
-            <div id="opcao"></div>
-            <button id="proximo">Próximo</button>
-        </div>
-        <div id="tela-resultado">
-            <p id="pontuação"></p>
-            <p id="mensagem"></p>
-            <button id="restart">Jogar de novo</button>
-            <button id="tema">Trocar de temas</button>
-            <p id="recorde"></p>
+        <div class="cartao">
+            <div class="tela" id="tela-inicio">
+                <h1 id="inicio">Escolha um tema</h1>
+                <div id="button-div"></div>
+            </div>
+            <div class="tela" id="tela-jogo">
+                <div class="barra"><div id="progresso"></div></div>
+                <p id="pergunta"></p>
+                <p id="tempo"></p>
+                <h1 id="titulo"></h1>
+                <h2 id="texto"></h2>
+                <div id="opcao"></div>
+                <button id="proximo">Próximo</button>
+            </div>
+            <div class="tela" id="tela-resultado">
+                <p id="pontuação"></p>
+                <p id="mensagem"></p>
+                <p id="recorde"></p>
+                <div class="acoes">
+                    <button id="restart">Jogar de novo</button>
+                    <button id="tema">Trocar de temas</button>
+                </div>   
+            </div>
         </div>
         <script src="script.js"></script>
     </body>

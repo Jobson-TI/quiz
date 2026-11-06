@@ -12,6 +12,8 @@ const temaResultado = document.getElementById("tema");
 const restart = document.getElementById("restart");
 const mens = document.getElementById("mensagem");
 const recordeEl = document.getElementById("recorde");
+const progresso = document.getElementById("progresso");
+const progressoEl = document.getElementById("pergunta");
 
 let recordes = JSON.parse(localStorage.getItem("recordes")) || {};
 
@@ -85,8 +87,11 @@ function iniciarJogo(t){
 
 function mostrarPergunta(){
     const p = perguntas[atual];
+    const de = perguntas.length;
 
-    proximo.style.display = "none";
+    proximo.style.visibility = "hidden";
+    progresso.style.width = `${((atual + 1) / perguntas.length) * 100}%`;
+    progressoEl.textContent = `Pergunta ${atual + 1} de ${de}`;
 
     clearInterval(intervalo);
     tempo = 10;
@@ -141,7 +146,13 @@ function revelarResposta(){
     botoes.forEach(function (b) {
         b.disabled = true;
     });
-    proximo.style.display = "block"
+    proximo.style.visibility = "visible"
+
+    if (atual === perguntas.length - 1) {
+        proximo.textContent = "Ver resultado 🏁";
+    } else {
+        proximo.textContent = "Próximo";
+    }
 };
 
 function mostrarResultado(){
@@ -165,7 +176,9 @@ function mostrarResultado(){
         recordes[tema.nome] = pontos;
         localStorage.setItem("recordes", JSON.stringify(recordes));
         recordeEl.textContent = "🎉 Novo recorde!";
+        recordeEl.classList.add("destaque");
     } else {
+        recordeEl.classList.remove("destaque");
         recordeEl.textContent = `Recorde: ${recorde}`;
     }
 
