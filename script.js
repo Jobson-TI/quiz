@@ -11,6 +11,9 @@ const telaInicio = document.getElementById("tela-inicio");
 const temaResultado = document.getElementById("tema");
 const restart = document.getElementById("restart");
 const mens = document.getElementById("mensagem");
+const recordeEl = document.getElementById("recorde");
+
+let recordes = JSON.parse(localStorage.getItem("recordes")) || {};
 
 const temas = [
     {
@@ -50,6 +53,10 @@ let perguntas = tema.perguntas;
 let atual = 0;
 let pontos = 0;
 
+const tempoEl = document.getElementById("tempo");
+let tempo = 10;
+let intervalo = null;
+
 function criarTemas(){
     temas.forEach(function (t){
         const btnTema = document.createElement("button");
@@ -66,7 +73,11 @@ function iniciarJogo(t){
     atual = 0;
     pontos = 0;
     tema = t;
-    perguntas = t.perguntas;
+    perguntas = [...t.perguntas];
+
+    perguntas.sort(function (){
+        return Math.random() - 0.5;
+    });
     
     mostrarTela(telaJogo);
     mostrarPergunta();
@@ -74,6 +85,29 @@ function iniciarJogo(t){
 
 function mostrarPergunta(){
     const p = perguntas[atual];
+
+    proximo.style.display = "none";
+
+    clearInterval(intervalo);
+    tempo = 10;
+    tempoEl.classList.remove("metade", "esgota");
+    tempoEl.textContent = tempo;
+
+    intervalo = setInterval(function (){
+        tempo -= 1;
+        tempoEl.textContent = tempo;
+
+        if(tempo >= 4 && tempo <= 6){
+            tempoEl.classList.add("metade");
+        } else if(tempo <= 3){
+            tempoEl.classList.remove("metade");
+            tempoEl.classList.add("esgota");
+        }
+        if(tempo === 0) {
+            clearInterval(intervalo);
+            revelarResposta();
+        }
+    }, 1000);
 
     titulo.textContent = tema.nome;
     texto.textContent = p.pergunta;
@@ -87,23 +121,27 @@ function mostrarPergunta(){
         
         
         botao.addEventListener('click', function(){
-            const botoes = opcao.querySelectorAll("button");
+            clearInterval(intervalo);
             if(indice !== p.correta) {
-                botoes[indice].classList.add("errada");
+                botao.classList.add("errada");
             } else {
                 pontos += 1;
             }
-            botoes[p.correta].classList.add("certa");
-            botoes.forEach(function (b) {
-                b.disabled = true;
-            });
-            proximo.style.display = "block"
-                
+            revelarResposta();
         })
     });
-
-
     
+};
+
+function revelarResposta(){
+    const p = perguntas[atual];
+    const botoes = opcao.querySelectorAll("button");
+    
+    botoes[p.correta].classList.add("certa");
+    botoes.forEach(function (b) {
+        b.disabled = true;
+    });
+    proximo.style.display = "block"
 };
 
 function mostrarResultado(){
@@ -121,12 +159,21 @@ function mostrarResultado(){
 
     mens.textContent = mensagem;
 
+    const recorde = recordes[tema.nome] || 0;
+
+    if (pontos > recorde) {
+        recordes[tema.nome] = pontos;
+        localStorage.setItem("recordes", JSON.stringify(recordes));
+        recordeEl.textContent = "🎉 Novo recorde!";
+    } else {
+        recordeEl.textContent = `Recorde: ${recorde}`;
+    }
+
     mostrarTela(telaResultado);
 };
 
 proximo.addEventListener("click", function(){
     atual += 1; 
-    proximo.style.display = "none";
     if(atual === perguntas.length){
         mostrarResultado();
     } else {
